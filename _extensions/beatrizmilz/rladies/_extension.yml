@@ -1,0 +1,15 @@
+title: "2023 방법론 세미나 Week 3 - HLM"
+author: Sangwon Ju
+version: 0.0.3
+contributes:
+  formats: 
+    revealjs:
+      logo: logo.png
+      footer: |
+        2023 방법론 세미나 Week 3: HLM
+      theme: rladies.scss
+      slide-number: c/t
+      show-slide-number: all
+      title-slide-attributes:
+        data-background-color: "#0aa8ab"
+      preview-links: true

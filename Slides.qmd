@@ -1,0 +1,600 @@
+---
+title: "증거기반연구 6차 세미나"
+subtitle: "Week 3: HLM (위계적 선형 모형)"
+institute: "서울대학교 행정대학원 석사과정"
+author: "[주상원](sangwonju.netlify.app)"
+date: today
+date-format: "DD MMM YYYY"
+format: 
+  rladies-revealjs:
+    footer: "2023 방법론 세미나 Week 3: HLM"
+    transition: slide
+    background-transition: fade
+    transition-speed: fast
+    mouse-wheel: true
+    auto-stretch: true
+    
+incremental: false
+embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# 열심히 해봅시다... 영차영차...
+
+![](page1.png){.r-stretch fig-align="center"}
+
+```{css, echo = FALSE}
+.justify {
+  text-align: justify !important
+}
+.column {
+text-align: center;
+}
+.output {
+    align-items: center;
+}
+.center {
+  display: table;
+  margin-right: auto;
+  margin-left: auto;
+}
+```
+
+## 목차
+
+i.  **이론**
+
+-   위계적 선형모형 (Hierarchical Linear Modelling = Mixed Effect Model = Multilevel Model)의 개념
+
+    > 핵심어: Gauss-Markov Theorem, Nested Data, Ecological fallacy
+
+-   HLM의 유형 및 분석단계별 유의사항
+
+    > 핵심어: Intercept and Slopes, MLE, ICC, AIC(BIC), Deviance, Fixed and Random Effects, Within vs. Between
+
+-   Inter-Level Interaction, Centering and Contextual Effects
+
+ii. **실습:** R과 Stata로 실제 데이터 분석
+
+# Module I: 위계적 선형모형의 개념 {background-color="#0AA8AB"}
+
+## 회귀분석의 기본 가정s
+
+::: justify
+-   **가우스-마르코프 정리**: 선형회귀분석에서 (1) 선형이고, (2, 3) 오차($\sigma$)가 $\epsilon \sim N(0,\sigma^2)$, (4) 오차가 상관관계가 없고, (5) 설명변수가 외생변수일 때 최소제곱 추정량(OLS)은 BLUE(Best **Linear** **Unbiased** Estimator)이다. [출처](https://www.econometrics-with-r.org/5-5-the-gauss-markov-theorem.html)
+:::
+
+![Assumptions](page3.png){.r-stretch fig-align="center"}
+
+## 그러나 현실은...? 특히 조직연구에서는..? {.nostretch}
+
+-   Nested Data: 학교 \> 학년 \> 반 \> 개인
+-   조직연구의 경우: e.g. 공무원 조직: 공무원 개인 → 과 → 국 → 처\ 
+
+![](page4.png){fig-align="center"}
+
+## 위계적 다층자료: Nested Data의 주요 형태
+
+-   위계적 구조: Long Form vs. Wide Form
+
+::: {#tbl-panel layout-ncol="2"}
+| 이름 | 1반 | 2반 | 3반 | 통계성적 |
+|:----:|:---:|:---:|:---:|:--------:|
+|  A   |  0  |  0  |  0  |    95    |
+|  B   |  1  |  0  |  1  |    65    |
+|  C   |  0  |  1  |  0  |    85    |
+|  D   |  0  |  1  |  0  |    45    |
+|  E   |  0  |  0  |  1  |    75    |
+
+: Wide Form Nested {#tbl-first}
+
+| 이름 | 소속반 | 통계성적 |
+|:----:|:------:|:--------:|
+|  A   |  1반   |    95    |
+|  B   |  3반   |    65    |
+|  C   |  2반   |    85    |
+|  D   |  2반   |    45    |
+|  E   |  3반   |    75    |
+
+: Long Form Nested {#tbl-second}
+
+학생이 학교에 내재한 2-수준 다층자료의 예시
+:::
+
+. . .
+
+::: {style="font-size: 1 em; color: #066163;"}
+-   *if 소속반을 시간으로 바꾸어 반복측정?:* **종단(Longitudinal) Panel Data**
+:::
+
+ 
+## 위계적 다층자료 (Cont'd)
+
+-   **학생들은 각 학교에 내재한 구조**  동일 반에 속한 학생들은 학교의 문화, 학습환경, 친구관계, 교사 등 수많은 요인들을 공유하므로 동일학교 학생들의 행동(e.g. 성취도, 학습동기)에 영향을 미침.
+-   **상호의존성**\
+    관찰단위인 학생들은 동일 학교, 동일 반 내에서는 **상호의존성**을 가지게 되고, 소속이 다르면 독립성을 갖는다. $\rightarrow$ 독립성 가정이 결과적으로 위배되게 됨.
+-   **복수의 Unit of Analysis**\
+    학생수준에서의 변수 (Level 1): 성취도, 가정배경, 친구관계 등\
+    학교수준에서의 변수 (Level 2): 교장경력, 교사 수, 학생 수, 소재지, 설립유형 등
+-   **불균형 자료**\
+    각 학교별로 학생이 다르기에 관측치는 일반적으로 같을 수 없음.
+-   이 외에도 교차적 다층자료, 반복측정 다층자료 등의 경우 각각 고유의 특성 존재.
+
+## 독립성 (Independence) 가정의 위배 {.nostretch}
+
+i.  **Error와 독립변수간에 상관관계가 없어야 함 (Endogeneity issue)**\
+
+-   중요한 변수가 모형에서 생략되어지거나, 비체계적 오류로 인한 측정오차, 독립변수와 종속변수간 동시상관시 발생\
+
+::: {style="font-size: 1 em; color: #066163;"}
+ii. **Error 간에 상관관계가 없어야 함**\
+:::
+
+-   $COV(e_i,e_j) = E(e_ie_j)-E(e_i)E(e_j) = 0$\
+    상위수준(Level 2) 군집화 $\rightarrow$ Error간에 상관관계가 발생한다면?\
+    회귀분석의 추정치의 분산이 과도하게 커짐 $\rightarrow$ 정확 X
+
+## 독립성 (Independence) 가정의 위배 (Cont'd) {.nostretch .smaller}
+
+```{r}
+#| echo: false
+#| output: false
+pacman::p_load(tidyverse, broom, plotly,showtext, ggtext, kableExtra, ggiraph, Statamarkdown)
+font_add_google("Nanum Gothic")
+showtext_auto()
+set.seed(2023)
+data <- tibble()
+data1 <- tibble(x = rnorm(1, m=35, sd=5),
+               y = 0.5 * x + rnorm(1) +25,
+               group = 1)
+for (i in 1:30) {
+  x <- rnorm(100, m=50, sd=5-0.01*(i-15)^2) - 0.6*i
+  y <- 0.5 * x + rnorm(100, sd=2) + 15 + 2*i  
+  assign(glue::glue("data_{i}"), 
+         tibble(x,y,group = i))
+  data <- bind_rows(data, get(glue::glue("data_{i}")))
+}
+```
+
+**학습시간과 통계과목 성적간의 관계 분석**
+
+-   데이터
+
+::: panel-tabset
+## 기술통계량
+
+```{r}
+#| echo: false
+data %>% 
+  transmute(group = factor(group),
+            x,
+            y) %>% 
+    skimr::skim() %>%
+    knitr::kable(booktabs = T ,escape = F, align = 'c') %>%
+    kable_classic(full_width = T,
+                  position = "center", font_size = 10)
+```
+
+## Raw Data
+
+```{r}
+data %>% 
+  transmute(group = factor(group),
+            x,
+            y) %>% 
+  mutate(across(where(is.numeric), ~round(.,3))) %>% 
+  DT::datatable(., options = list(pageLength = 5))
+```
+:::
+
+-   모형
+
+![](page5.png){fig-align="center" style="fig-align" width="550"}
+
+## 독립성 (Independence) 가정의 위배 (Cont'd) {.nostretch auto-animate="true"}
+
+-   시각화
+
+```{r}
+#| echo: false
+#| output-location: fragment
+p <- data %>% 
+  ggplot(aes(x=x, y=y))+
+  geom_point(color = "#066163")+ 
+  ds4psy::theme_ds4psy() +
+  labs(x= "한달 학습 시간 (시간)", 
+       y= "기말고사 통계과목 시험점수 (점)",
+       title = "서울대학교 학생들의 학습시간과 통계과목 성적") +
+  ggeasy::easy_center_title() +  
+  theme(text=element_text(family='Nanum Gothic'),
+        plot.title = element_textbox_simple(family = "Nanum Gothic",
+                                            size = 15, 
+                                            lineheight = 1,
+                                            margin = margin(b=10)),
+        axis.title = element_textbox_simple(family = "Nanum Gothic",
+                                              size = 13, 
+                                              lineheight = 1,
+                                              margin = margin(b=10))) +
+  ggthemes::scale_color_tableau() 
+
+```
+
+::: center
+```{r}
+#| echo: false
+#| fig-align: center
+#| fig-dpi: 350
+#| fig-height: 5.7
+#| fig-width: 5.7
+
+
+ggplotly(p)
+```
+:::
+
+## 독립성 (Independence) 가정의 위배 (Cont'd) {.nostretch auto-animate="true"}
+
+-   시각화
+
+```{r}
+#| echo: false
+#| output-location: fragment
+p <- data %>% 
+  ggplot(aes(x=x, y=y))+
+  geom_point(color = "#066163")+ 
+  ds4psy::theme_ds4psy() +
+  labs(x= "한달 학습 시간 (시간)", 
+       y= "기말고사 통계과목 시험점수 (점)",
+       title = "서울대학교 학생들의 학습시간과 통계과목 성적") +
+  geom_smooth(linewidth = 2, color="#630806", method="lm", se =F) + 
+  ggeasy::easy_center_title() +  
+  theme(text=element_text(family='Nanum Gothic'),
+        plot.title = element_textbox_simple(family = "Nanum Gothic",
+                                            size = 15, 
+                                            lineheight = 1,
+                                            margin = margin(b=10)),
+        axis.title = element_textbox_simple(family = "Nanum Gothic",
+                                              size = 13, 
+                                              lineheight = 1,
+                                              margin = margin(b=10))) +
+  ggthemes::scale_color_tableau() 
+
+```
+
+::: center
+```{r}
+#| echo: false
+#| fig-dpi: 350
+#| fig-height: 5.7
+#| fig-width: 5.7
+
+ggplotly(p)
+```
+:::
+
+## 독립성 (Independence) 가정의 위배 (Cont'd) {.nostretch auto-animate="true"}
+
+-   시각화
+
+::: center
+```{r}
+#| echo: false
+#| output-location: fragment
+#| fig-dpi: 400
+#| fig-height: 5.7
+#| fig-width: 5.7
+data %>% 
+  mutate(group = as.factor(group)) %>% 
+  ggplot(aes(x=x, y=y, group = group, colour = group))+
+  geom_point()+ 
+  ds4psy::theme_ds4psy() +
+  labs(x= "한달 학습 시간 (시간)", 
+       y= "기말고사 통계과목 시험점수 (점)",
+       title = "서울대학교 학생들의 학습시간과 통계과목 성적 (30분반)") +
+  geom_smooth(linewidth = 2, method="lm", se =F) + 
+  theme(text=element_text(family='Nanum Gothic'),
+        plot.title = element_text(family = "Nanum Gothic", size = 28),
+        axis.title = element_text(family = "Nanum Gothic", size = 25),
+        axis.text = element_text(family = "Nanum Gothic", size = 20),
+        legend.position="none") +  
+  ggeasy::easy_center_title() 
+```
+:::
+
+## 독립성 (Independence) 가정의 위배 (Cont'd)
+
+-   **Pooled OLS**
+
+```{r}
+#| echo: false
+lm(y~x, data= data) %>% broom::tidy() %>%
+  mutate(across(where(is.numeric), ~round(.,3))) %>% 
+  knitr::kable(booktabs = T ,escape = F, align = 'c') %>%
+  kable_classic(full_width = T,
+                  position = "center", font_size = 25)
+```
+
+\
+
+-   **Grouped regression** 30개 그룹의 estimates들의 평균
+
+```{r}
+#| echo: false
+data %>% 
+  nest(data= c(x,y)) %>% 
+  mutate(regression = purrr::map(data, ~lm(y~x, data=.))) %>% 
+  mutate(tidylm= purrr::map(regression, ~broom::tidy(.))) %>% 
+  select(group, tidylm) %>% 
+  unnest(tidylm) %>% 
+  group_by(term) %>% 
+  summarise(across(c(estimate, std.error, statistic), mean)) %>% 
+  mutate(across(where(is.numeric), ~round(.,3))) %>% 
+  knitr::kable(booktabs = T ,escape = F, align = 'c') %>%
+  kable_classic(full_width = T,
+                  position = "center", font_size = 25)
+```
+
+## 정리
+
+-   How to investigate relationships between variables that reside at different hierarchical levels (Bryk & Raudenbush, 2002)\
+    **Disaggregate?**: POLS $\rightarrow$ independence of obs assumption violated\
+    **Aggregate?**: Between $\rightarrow$ waste information from indvs, sample $\downarrow$
+
+ 
+. . .
+
+::: columns
+::: {.column width="50%"}
+![POLS](pols.png){fig-align="center"}
+:::
+  
+ 
+::: {.column width="50%"}
+![Between](between.png){fig-align="center"}
+:::
+:::
+
+## 위계적 선형 모형 (HLM)
+
+::: justify
+**대안: Hierarchical Linear Models**\
+(Hierarchical Linear Model = Mixed Effect Model = Multilevel Model)
+
+-   designed to overcome the weakness of the disaggregated and aggregated approaches\
+
+1.  explicitly model both **individual and group level residuals**, therefore, recognizing the partial interdependence of individuals within the same group (compared to OLS)
+2.  investigate both **lower level unit and higher level unit** variance in the outcome measure
+
+$\therefore$ Model both within and between group variance (i.e., able to preserve potentially meaningful within group variance) + Investigate the influence of higher level units on lower level outcomes
+:::
+
+## Module 1: Sum-up
+
+::: justify
+-   현대 사회에서 인간의 다양한 위계에 nested 되어있는 존재이다.
+-   이러한 조직 내에서의 군집성으로 인해 서로서로에게 영향을 주게 되고, 결과적으로 개체들 간의 독립성을 가정하는 가우스-마르코프 가정을 충족하는 것이 까다로움
+-   $\therefore$ 개개인간의 독립성이 존재하기 어렵고, 자료 자체가 nested되어 있다는 것을 고려하지 못함 $\rightarrow$ Individual 대상 연구에서 (특히, 조직맥락) OLS는 더이상 만능 X, 생태학적 오류를 범할 수 있게 됨
+-   **HLM의 필요성**: within과 between을 가중평균하고, level 1과 2를 동시에 고려
+:::
+
+# Module II: HLM의 유형 및 분석 {background-color="#0AA8AB"}
+
+## HLM의 장점
+
+::: justify
+ 
+-   **Improves estimation of individual effects**  
+ 
+-   **Models cross-level effects**: an interaction  
+ 
+-   **Better partitioning of variance and covariance**   you have variance and covariance of data set, and you can think about how much is due to Level 2 and how much is due to Level 1 etc.   E.g. How much is school, how much is student?
+ 
+-   **No assumption of homogeneity of slopes**   i.e., that each data entry can have a different slope
+ 
+-   **No assumption of independence**   because in this model they are correlated  
+ 
+-   **Missing data OK**   the structure of the data -- you don't need data for people at every time point (e.g., repeated measures), or every group has to have a score for every person (e.g., nested).
+:::
+
+## HLM의 어려움
+
+::: justify
+-   hard to conceptualize phenomena at more than one level
+-   requires conceptual and theoretical understanding at various levels
+-   easy to use the code (R - lmer4, Stata - mixed), difficult to understand what its doing
+-   most important: interpreting what the estimated parameters actually mean
+:::
+
+## HLM의 이론
+
+1.  Identify average outcome differences between groups  
+2.  Identify whether outcomes vary among persons with different attributes  
+3.  Model differences in average outcomes among groups  
+4.  **Model differences in outcomes associated with individual attributes among groups.**
+
+::: columns
+::: {.column width="50%"}
+![](m21.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+![](m22.png){fig-align="center"}
+:::
+:::
+
+## HLM의 이론 (Cont'd) {.smaller}
+
+::: justify
+-   **OLS**  
+
+$$Y_{i} = \beta_{0} + \beta_{1} X_{i} + e_{i} \quad e_i \sim N(0,\sigma^2)$$
+
+-   다층모형은 집단내(개인: $i$)과 집단간(집단: $j$) 모형을 별개로 model specification 한다
+
+**Level 1:** $$Y_{0j} = \beta_{0j} + \beta_{1j} X_{ij} + r_{ij} \quad r_i \sim N(0,\sigma^2)$$
+
+**Level 2:** $$\beta_{0j} = \gamma_{00} + u_{0j}, \quad u_{0j}\sim N(0,\tau_{00}) $$ $$\beta_{1j} = \gamma_{10} + u_{1j}, \quad u_{1j}\sim N(0,\tau_{11}) $$
+
+-   **Fixed effects:**\
+    $\gamma_{00}$ = average outcome for sample of groups\
+    $\gamma_{10}$ = average individual effect (slope) on outcome  
+
+-   **Random effects:\
+    **$u_{0j}$ = unique effect of group j on average outcome\
+    $u_{1j}$ = unique effect of group j on average slope  
+:::
+
+## Fixed Effect and Random Effect
+
+**In Panel**, only on intercepts   
+
+-   Fixed Effect: Time invariant Observation's Effect vs
+
+<!-- -->
+
+-   Random Effect: Time invariant Observation's Effect + *Random Part*  
+
+**In HLM**, similar but also on slopes   
+
+-   **Fixed Effects**: parameter estimates that do not vary across groups (group invariant)\
+    The $\gamma$'s in equations represent fixed effects  
+
+<!-- -->
+
+-   **Random coefficients**: parameter estimates that are allowed to vary across groups such as the level-1 regression coefficients (e.g., $β_{0j}$ and $β_{1j}$).
+
+## Fixed Effect and Random Effect (cont'd)
+
+-   **Fixed Effects**: parameter estimates that do not vary across groups (group invariant)\
+    The $\gamma$'s in equations represent fixed effects  
+
+<!-- -->
+
+-   **Random coefficients**: parameter estimates that are allowed to vary across groups such as the level-1 regression coefficients (e.g., $β_{0j}$ and $β_{1j}$).
+
+-   Equation $$ Y_{0j} =\gamma_{00} + u_{0j} + (\gamma_{10} + u_{1j})X_{ij} + r_{ij} $$ $$= \underline{\gamma_{00} + \gamma_{10} X_{ij}} + \quad \quad \underline{u_{0j} + u_{1j}X_{ij}+r_{ij}} $$
+
+-   Error Term이 복잡함: Group들 사이의 분산($u_{oj}, u_{1j}$)과 Individual들 사이의 Group내 분산($r_{ij}$)이 동시에 존재
+
+-   OLS로는 계산이 어렵기에 [Maximum Likelihood Estimation](https://www.youtube.com/watch?v=XhlfVtGb19c)을 활용
+
+## Fixed Effect and Random Effect (cont'd)
+
+[출처](https://bookdown.org/steve_midway/DAR/random-effects.html) \ 
+
+![](fere.png){fig-align="center"} 
+
+## Tabset example
+
+
+## Incremental content
+
+Hi!
+
+  
+
+Use ` ` to separate content as an incremental slide!
+
+## You can add R code
+
+```{r}
+#| echo: true
+library(dplyr)
+library(ggplot2)
+g <- starwars |> 
+  ggplot() +
+  geom_point(aes(x = height, y = mass)) +
+  theme_light()
+```
+
+## And show the results aswell :)
+
+```{r}
+#| fig.align: center
+#| echo: true
+g 
+```
+
+## What about tables? {.smaller}
+
+### `knitr::kable()`
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| label: kable-ex
+#| echo: true
+#| eval: false
+tab <- starwars |>
+  tidyr::drop_na(species) |> 
+  group_by(species) |>
+  summarise(
+    n = n(),
+    mean_heigth = round(mean(height, na.rm = TRUE)),
+    mean_mass = round(mean(mass, na.rm = TRUE))
+  ) |> 
+  slice_max(order_by = n, n = 4) 
+
+knitr::kable(tab)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: kable-ex
+#| eval: true
+```
+:::
+:::
+
+## `DT::datatable()` {.smaller}
+
+With the `smaller` class in the slide! Ex: `## slide name {.smaller}`
+
+```{r}
+DT::datatable(tab, options = list(pageLength = 5))
+```
+
+## `gt::gt()`
+
+```{r}
+gt::gt(tab)
+```
+
+## `reactable::reactable()`
+
+```{r}
+reactable::reactable(tab)
+```
+
+## Diagrams with Mermaid!
+
+Read about how to create a diagram in this [post by Mine Çetinkaya-Rundel](https://mine-cetinkaya-rundel.github.io/quarto-tip-a-day/posts/21-diagrams/).
+
+<center>
+
+<blockquote class="twitter-tweet" data-conversation="none">
+
+<p lang="en" dir="ltr">
+
+<a href="https://twitter.com/hashtag/quartotip?src=hash&amp;ref_src=twsrc%5Etfw">#quartotip</a> 21: Create diagrams in Quarto documents using Mermaid or Graphviz in executable code cells, similar to how you create figures.<br><br>Read more: <a href="https://t.co/3qx9oSNCay">https://t.co/3qx9oSNCay</a> <a href="https://t.co/fYzGcISl4h">pic.twitter.com/fYzGcISl4h</a>
+
+</p>
+
+--- Quarto (@quarto_pub) <a href="https://twitter.com/quarto_pub/status/1549271325943947270?ref_src=twsrc%5Etfw">July 19, 2022</a>
+
+</blockquote>
+
+```{=html}
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+```
+</center>
+
+## Exporting into PDF
+
+You can use the function `pagedown::chrome_print()` to print the HTML version into a PDF!
+
+``` r
+pagedown::chrome_print("path-to-file.html")
+```
