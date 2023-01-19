@@ -7,13 +7,13 @@ date: today
 date-format: "DD MMM YYYY"
 format: 
   rladies-revealjs:
+    
     footer: "2023 방법론 세미나 Week 3: HLM"
     transition: slide
     background-transition: fade
     transition-speed: fast
     mouse-wheel: true
     auto-stretch: true
-    
 incremental: false
 embed-resources: true
 editor_options: 
