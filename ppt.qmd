@@ -495,7 +495,7 @@ pacman::p_load("tidyverse", "magrittr", # data분석 필수 패키지
                "readstata13", # statafile (.dta) 열어주는 패키지 
                "skimr", "psych") # 요약표, 심리학 분석
 ## 자신이 설정하고 싶은 곳으로 설정
-setwd("E:/OneDrive - SNU/(B) 대학원/세미나/HLM/hlm") 
+setwd("E:/OneDrive - SNU/(B) 대학원/세미나/HLM")
 getwd()
 
 # Read data
