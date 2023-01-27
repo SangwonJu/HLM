@@ -988,7 +988,10 @@ HLM_ICC_rWG(data_merged, group="id", icc.var="mathach")
 
 -   ICC(1) is typically interpreted as a measure of effect size (Bliese, 2000; Bryk & Raudenbush, 1992)
 
--   전체 분산(Level-2 분산과 Level-1 또는 잔차 분산의 합)에 대한 Level-2 분산(집단 평균의 분산)의 비율이 클수록, 집단 간(between)의 유사성보다 집단 내부(within)간의 유사성이 큼을 의미 $$ ICC(1) = \frac{학교\,간\,분산}{전체\,관찰분산} = \frac{Var(\beta_{0j})}{Var(Y_{ij})}= \frac{\tau}{\sigma^2 + \tau} = \frac{8.614}{39.148 + 8.614} = 0.18035 $$
+-   전체 분산(Level-2 분산과 Level-1 또는 잔차 분산의 합)에 대한 Level-2 분산(집단 평균의 분산)의 비율이 클수록, 집단 간(between)의 유사성보다 집단 내부(within)간의 유사성이 큼을 의미 
+
+
+$$ ICC(1) = \frac{학교\,간\,분산}{전체\,관찰분산} = \frac{Var(\beta_{0j})}{Var(Y_{ij})}= \frac{\tau}{\sigma^2 + \tau} = \frac{8.614}{39.148 + 8.614} = 0.18035 $$
 
 -   만약 ICC(1)의 값이 0이라면 한 집단에 속한 응답치들 간의 유사성이 다른집단에 속한 응답치들과 보이는 유사성과 다르지 않음 (일반적으로 0.05\~0.25 정도)
 
