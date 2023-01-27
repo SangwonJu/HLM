@@ -13,10 +13,15 @@ format:
     transition-speed: fast
     mouse-wheel: true
     auto-stretch: true
+    pointer: 
+      - color: "#0AA8AB"
+      - pointerSize: 20
 incremental: false
 embed-resources: true
 editor_options: 
   chunk_output_type: console
+revealjs-plugins:
+  - pointer
 ---
 
 # 열심히 해봅시다... 영차영차...
