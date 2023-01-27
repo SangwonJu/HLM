@@ -196,7 +196,9 @@ simul %>%
   DT::datatable(., options = list(pageLength = 5))
 ```
 :::
-    -   모형
+    
+
+-   모형
 
 ![](page5.png){fig-align="center" style="fig-align" width="550"}
 
