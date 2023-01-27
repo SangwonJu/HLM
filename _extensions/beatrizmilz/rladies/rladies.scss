@@ -14,7 +14,7 @@ $h2-font-size: 1.05em !default;
 $h3-font-size: 1em !default;
 
 //code
-$code-color: #066163 !default;
+$code-color: #063263 !default;
 $font-family-monospace: 'Gothic A1', monospace  !default;
 
 // general  
@@ -26,9 +26,9 @@ $presentation-font-size-root: 30px;
 /*-- scss:rules --*/
 .reveal pre code {
   background-color: #f8f8f8;
-  font-size: 0.9em;
+  font-size: 1.2em;
   padding: 0.5em;
-  line-height: 1 em;
+  line-height: 1.3 em;
 }
 
 
@@ -74,9 +74,9 @@ section.has-dark-background a, section.has-dark-background a:hover {
   display: block !important;
   position: fixed !important;
   top: 0 !important;
-  right: 8px !important;
+  right: 8 !important;
   max-height: 15% !important;
-  height: 100% !important;
+  height: 85% !important;
   width: auto !important;
   color: $body-color !important;
 }
@@ -87,3 +87,10 @@ section.has-dark-background a, section.has-dark-background a:hover {
   top: unset !important;
   color: $body-color !important;
 }
+
+.body {
+  background-image: url('./logo.png');
+  background-repeat: no-repeat;
+  background-position: top right;
+  background-size: auto 15%;
+  }
