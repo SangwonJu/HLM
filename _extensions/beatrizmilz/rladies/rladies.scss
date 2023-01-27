@@ -1,6 +1,6 @@
 /*-- scss:defaults --*/
 // importing fonts
-@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Lato&family=Nanum+Gothic&family=Gothic+A1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Lato&family=Inconsolata&family=Nanum+Gothic&family=Gothic+A1&display=swap');
 
 // fonts
 $font-family-sans-serif: 'Nanum Gothic', Tahoma, sans-serif !default;
@@ -8,14 +8,13 @@ $font-family-sans-serif: 'Nanum Gothic', Tahoma, sans-serif !default;
 // headings
 $presentation-heading-font: 'Do Hyeon',  Tahoma, sans-serif  !default;
 $presentation-heading-color: #066163  !default;
-$presentation-heading-line-height: 1.1em ;
-$h1-font-size: 1.1em !default;
+$h1-font-size: 1.2em !default;
 $h2-font-size: 1.05em !default;
 $h3-font-size: 1em !default;
 
 //code
 $code-color: #063263 !default;
-$font-family-monospace: 'Gothic A1', monospace  !default;
+$font-family-monospace: 'Inconsolata', monospace  !default;
 
 // general  
 $body-bg: #fff;
@@ -69,14 +68,13 @@ section.has-dark-background a, section.has-dark-background a:hover {
     color: #fee4ff;
 }
 
-
 .slide-logo {
   display: block !important;
   position: fixed !important;
   top: 0 !important;
-  right: 8 !important;
+  right: 10px !important;
   max-height: 15% !important;
-  height: 85% !important;
+  height: 100% !important;
   width: auto !important;
   color: $body-color !important;
 }
@@ -87,10 +85,3 @@ section.has-dark-background a, section.has-dark-background a:hover {
   top: unset !important;
   color: $body-color !important;
 }
-
-.body {
-  background-image: url('./logo.png');
-  background-repeat: no-repeat;
-  background-position: top right;
-  background-size: auto 15%;
-  }
