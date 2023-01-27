@@ -19,7 +19,7 @@ embed-resources: true
 
 # 열심히 해봅시다... 영차영차...
 
-![](page1.png){fig-align="center"}
+![](fig2.jpg){fig-align="center"}
 
 
 ```{css, echo = FALSE}
@@ -65,7 +65,7 @@ ii. **실습:** R과 Stata로 실제 데이터 분석
 ## 그러나 현실은...? 특히 조직연구에서는..? {.nostretch}
 
 -   Nested Data: 학교 \> 학년 \> 반 \> 개인
--   조직연구의 경우: e.g. 공무원 조직: 공무원 개인 → 과 → 국 → 처 
+-   조직수준의 변수가 조직 구성원의 개인 변수에 영향을 미치는 것이 일반적 
 
 ![](page4.png){fig-align="center"}
 
@@ -213,6 +213,8 @@ simul %>%
   labs(x= "한달 학습 시간 (시간)", 
        y= "기말고사 통계과목 시험점수 (점)",
        title = "서울대학교 학생들의 학습시간과 통계과목 성적") +
+  scale_x_continuous(breaks = seq(20, 65, by = 5), limits = c(20,65)) + 
+  scale_y_continuous(breaks = seq(40, 100, by = 10), limits = c(40,100)) + 
   ggeasy::easy_center_title() + 
   theme(text=element_text(family='Nanum Gothic'),
         plot.title = element_text(family = "Nanum Gothic", size = 28),
@@ -244,6 +246,8 @@ simul %>%
        y= "기말고사 통계과목 시험점수 (점)",
        title = "서울대학교 학생들의 학습시간과 통계과목 성적") +
   geom_smooth(linewidth = 2, color="#630806", method="lm", se =F) + 
+  scale_x_continuous(breaks = seq(20, 65, by = 5), limits = c(20,65)) + 
+  scale_y_continuous(breaks = seq(40, 100, by = 10), limits = c(40,100)) + 
   ggeasy::easy_center_title() + 
   theme(text=element_text(family='Nanum Gothic'),
         plot.title = element_text(family = "Nanum Gothic", size = 28),
@@ -280,6 +284,8 @@ simul %>%
   labs(x= "한달 학습 시간 (시간)", 
        y= "기말고사 통계과목 시험점수 (점)",
        title = "서울대학교 학생들의 학습시간과 통계과목 성적 (30분반)") +
+  scale_x_continuous(breaks = seq(20, 65, by = 5), limits = c(20,65)) + 
+  scale_y_continuous(breaks = seq(40, 100, by = 10), limits = c(40,100)) + 
   geom_smooth(aes(x=x, y=predicted,group = group, colour = group), linewidth = 2, method="lm", se =F) + 
   theme(text=element_text(family='Nanum Gothic'),
         plot.title = element_text(family = "Nanum Gothic", size = 28),
@@ -329,7 +335,8 @@ simul %>%
 ## 기존 접근의 한계
 
 -   How to investigate relationships between variables that reside at different hierarchical levels (Bryk & Raudenbush, 2002)\
--   **Disaggregate?**: POLS $\rightarrow$ independence of obs assumption violated\
+-   **Disaggregate?**: POLS $\rightarrow$ independence of obs assumption violated, 개인주의적 오류(individualistic fallacy)
+
 -   **Aggregate?**: Between $\rightarrow$ waste information from indvs, sample $\downarrow$, 생태학적 오류(Ecological Fallacy)
 
 . . .
@@ -349,8 +356,8 @@ simul %>%
 ::: justify
 -   현대 사회에서 인간의 다양한 위계에 nested 되어있는 존재이다.
 -   이러한 조직 내에서의 군집성으로 인해 서로서로에게 영향을 주게 되고, 결과적으로 개체들 간의 독립성을 가정하는 가우스-마르코프 가정을 충족하는 것이 까다로움
-    -   개개인간의 독립성이 존재하기 어렵고, 자료 자체가 nested되어 있다는 것을 고려하지 못함 $\rightarrow$ Individual 대상 연구에서 (특히, 조직맥락) OLS는 더이상 만능 X, 생태학적 오류를 범할 수 있게 됨
--   Pooled-OLS는 집단간 군집성 무시, 가우스 마르코브 가정 위배, 심슨의 패러독스, Between 모형은 개개인들의 특성이 고려되지 않는 문제, 생태학적 오류
+    -   기존방법은 (1) 개인 간의 완벽한 독립성이 존재하기 어렵고, (2) 자료 자체가 nested되어 있다는 것을 고려하지 못함 $\rightarrow$ Individual 대상 연구에서 (특히, 조직맥락) OLS는 더이상 만능 X, 개인주의적, 생태학적 오류를 범할 수 있게 됨
+-   **Pooled-OLS**는 집단간 군집성 무시, 가우스 마르코브 가정 위배, 심슨의 패러독스, 개인주의적 오류, **Between 모형**은 개개인들의 특성이 고려되지 않는 문제 , 생태학적 오류
 -   **HLM의 필요성**: within과 between을 동시에 다루고, level 1과 2를 동시에 고려
 :::
 # Module II: HLM의 개념 {background-color="#0AA8AB"}
@@ -358,7 +365,7 @@ simul %>%
 ## 위계적 선형 모형 (HLM)
 
 ::: justify
-**대안: Hierarchical Linear Models**\
+**(Hierarchical Linear Modelling = Mixed Effect Model = Multilevel Model)**
 
 
 -   designed to overcome the weakness of the disaggregated and aggregated approaches\
@@ -388,15 +395,17 @@ $\therefore$ Model both within and between group variance (i.e., able to preserv
 ## HLM의 이론 {.smaller}
 
 ::: justify
--   **OLS**  
+-   **OLS**는 집단에 대한 고려없이 모든 개인들을 동일하게 고려  
 
 $$Y_{i} = \beta_{0} + \beta_{1} X_{i} + \epsilon_{i} \quad \epsilon_i \sim N(0,\sigma^2)$$
 
--   **HLM**은 집단내(개인: $i$)과 집단간(집단: $j$) 모형을 별개로 model specification 한다
+-   **HLM**은 집단 내(개인: $i$)과 집단 간(집단: $j$) 모형을 별개로 model specification 한다
     - **Level 1:** 
     $$Y_{0j} = \beta_{0j} + \beta_{1j} X_{ij} + \epsilon_{ij} \quad \epsilon_i \sim N(0,\sigma^2)$$
     - **Level 2:** 
-    $$\beta_{0j} = \gamma_{00} + u_{0j}, \quad u_{0j}\sim N(0,\tau_{00}) $$ $$\beta_{1j} = \gamma_{10} + u_{1j}, \quad u_{1j}\sim N(0,\tau_{11}) $$
+    $$(Intercept)\, \beta_{0j} = \gamma_{00} + u_{0j}, \quad (Slope)\, \beta_{1j} = \gamma_{10} + u_{1j}$$
+    
+    $$\left[\begin{array}{cc} u_{0j} \\ u_{1j} \\ \end{array} \right] \sim N , (\left[\begin{array}{cc} 0 \\ 0 \\ \end{array} \right], \left[\begin{array}{cc} \tau_{00} & \tau_{01} \\ \tau_{10} & \tau_{11} \\ \end{array} \right]) $$
 
 -   **Fixed effects:**\
     $\gamma_{00}$ = average outcome for sample of groups, $\gamma_{10}$ = average individual effect (slope) on outcome 
@@ -405,9 +414,9 @@ $$Y_{i} = \beta_{0} + \beta_{1} X_{i} + \epsilon_{i} \quad \epsilon_i \sim N(0,\
     $u_{0j}$ = unique effect of group j on average outcome, $u_{1j}$ = unique effect of group j on average slope 
 :::
 
-## HLM을 통해 해결가능한 연구문제 examples {.smaller}
+## HLM을 통해 해결가능한 연구문제 examples (강상진, 2016) {.smaller}
 
-1.  우리나라 중학생 수학성취도의 학교간 교육격차는 어느정도인가?  
+1.  우리나라 중학생 수학성취도의 학교 간 교육격차는 어느정도인가?  
 2.  중학교 학생들의 수학성취도는 동일 학교 내에서 어느정도 차이가 있는가?  
 3.  학생들 사이의 수학성취도 차이에서 몇 $\%$가 소속학교의 영향인가?  
 4.  학생들의 수학성취도는 개인차 요인의 영향을 더 많이 받는가 아니면 학교차 요인의 영향을 더 많이 받는가?  
@@ -418,26 +427,7 @@ $$Y_{i} = \beta_{0} + \beta_{1} X_{i} + \epsilon_{i} \quad \epsilon_i \sim N(0,\
 9.  학생의 가정배경을 통제한 이후에 어떠한 특성의 중학교에서 평균 수학성취도가 높은가?  
 10. 학생들의 수학성취도가 가정환경에 영향을 받는 정도는 어떤 특성의 학교에서 더 커지는가?
 
-## Fixed Effect and Random Effect
-
-**In Panel**, only on intercepts  
-
--   Fixed Effect: Time invariant Observation's Effect vs
-
-<!-- -->
-
--   Random Effect: Time invariant Observation's Effect + *Random Part*  
-
-**In HLM**, similar but also on slopes  
-
--   **Fixed Effects**: parameter estimates that **do not vary across groups** (group invariant)\
-    The $\gamma$'s in equations represent fixed effects  
-
-<!-- -->
-
--   **Random coefficients**: parameter estimates that are allowed to vary across groups such as the level-1 regression coefficients (e.g., $β_{0j}$ and $β_{1j}$).
-
-## Fixed Effect and Random Effect (cont'd)
+## Fixed Effect and Random Effect 
 
 -   **Fixed Effects**: 선형 회귀모델과 같이 절편 및 기울기의 추정계수가 집단에 따라 변화하지 않고 단 하나의 값을 가짐
 
@@ -590,7 +580,7 @@ psych::describe(data_lv2)%>%
 `dplyr` 패키지는 다양한 데이터 merge 함수들을 제공하고 있음. 이중 HLM에서 자주 활용되는 `left_join`, `right_join`, `full_join`, `inner_join`, `semi_join`, `anti_join`등에 대해 간단히 다루고 넘어감.
 :::
 
--   `dplyr` join 함수들의 유형형
+-   `dplyr` join 함수들의 유형
     -   `left_join`(`right_join`): Join matching rows from y to x (x to y)
 
     -   `full_join`: Join data. Retain all values, all rows
@@ -625,13 +615,13 @@ left_join(
 
 ::: columns
 ::: {.column width="50%"}
-![Join 함수들](./dplyrjoin.png){fig-align="center"}
+![](./dplyrjoin.png){fig-align="center"}
 
 [출처](https://rfriend.tistory.com/625)
 :::
 
 ::: {.column width="50%"}
-![벤다이어그램](./joins.png){fig-align="center"}
+![](./joins.png){fig-align="center"}
 
 [출처](http://www2.stat.duke.edu/~cr173/Sta523_Fa15/gis.html)
 :::
@@ -672,13 +662,10 @@ bind_cols(list(data*, data*, ... ), .name_repair = c("unique", "universal"))
 
 **Pipe Operator**: `%>%`
 
--   lhs `%>%` rhs는 lhs의 결과를 rhs의 첫번째 변수로 넘겨주는 역할. `'.'`은 앞의 값의 위치를 구체적으로 지정하기 위해 사용
-
--   x `%>%` f is equivalent to f(x)
-
--   x `%>%` f(y) is equivalent to f(x, y)
-
--   x `%>%` f(y, `.`) is equivalent to f(y, x)
+-   (lhs `%>%` rhs)는 lhs의 결과를 rhs의 첫번째 변수로 넘겨주는 역할. `'.'`은 앞의 값의 위치를 구체적으로 지정하기 위해 사용
+    -   x `%>%` f is equivalent to f(x)
+    -   x `%>%` f(y) is equivalent to f(x, y)
+    -   x `%>%` f(y, `.`) is equivalent to f(y, x)
 
 **data_lv1와 data_lv2 데이터 병합**
 
@@ -713,7 +700,10 @@ data_btw <- data_merged %>%
   mutate(sector = factor(if_else(data_lv2$sector == 1 , "Catholic", "Public"), levels = c( "Public", "Catholic"))) %>%
   ungroup
 
-head(data_merged, 5) %>% 
+merged <- data_lv1 %>% 
+  left_join(data_lv2, by = "id")
+
+head(merged, 5) %>% 
   mutate(across(where(is.numeric), ~round(.,2))) %>% 
   knitr::kable(booktabs = T ,escape = F, align = 'c') %>%
   kable_classic(full_width = T,
@@ -814,7 +804,8 @@ p1 + p2
 
 $\rightarrow$ 쉽게 말해 **집단간 모평균(여기서는 수학성취도)이 서로 다른가**? 수준효과가 존재하는가?
 
-> $$ SST = SSA + SSE \quad \sum_{i=1}^a\sum^r_{j=1}(Y_{ij} - \bar{Y})^2 = \sum^a_{i=1} r(\bar{Y_{i.}}-\bar{Y})^2 + \sum_{i=1}^a\sum^r_{j=1}(Y_{ij} - \bar{Y_{i.}})^2 $$
+
+$$ SST = SSA + SSE \quad \sum_{i=1}^a\sum^r_{j=1}(Y_{ij} - \bar{Y})^2 = \sum^a_{i=1} r(\bar{Y_{i.}}-\bar{Y})^2 + \sum_{i=1}^a\sum^r_{j=1}(Y_{ij} - \bar{Y_{i.}})^2 $$
 
 -   SSA (sum of squares of treatment): 집단변량 제곱합 - 집단수준 변동
 
@@ -852,15 +843,18 @@ broom::tidy(model1) %>%
 #| fig-dpi: 400
 # Visualization
 data_merged %>% 
-  mutate(id = fct_reorder(id, meanses)) %>% 
-  ggplot(aes(group = id, 
-             x = id, 
+  group_by(id) %>%
+  mutate(meanses = mean(ses)) %>% 
+  ungroup %>% 
+  mutate(id = fct_reorder(id, meanses)) %>%
+  ggplot(aes(x = id, 
              y = mathach,
-             fill = sector )) + 
+             fill = sector,
+             group = id)) + 
   geom_boxplot() +
   ggthemes::scale_fill_tableau() +
   ds4psy::theme_ds4psy() + 
-  labs(x = "School id" , y = "수학 성취도", title = "학교별 개인 수학성취도 비교")+
+  labs(x = "School id (ordered by meanses)" , y = "수학 성취도", title = "학교별 개인 수학성취도 비교")+
   theme(text=element_text(family='Nanum Gothic'),
         axis.ticks.x = element_blank(),
         axis.text.x = element_blank(),
@@ -1094,7 +1088,7 @@ plotREsim(REsim(model1))+
 
 -   예를 들어, 교육연한이나 일 경험은 임금수준에 긍정적 효과를 주는 것으로 알려져 있는데 특정 업무를 하는 사람들 중에서 남자들이 교육연한이나 일경험에 대한 변수 값이 더 높을 때 그 업무에 종사하는 여자와 남자의 평균임금수준에 대한 비교분석 결과는 교육연한이나 일 경험을 통제했는지 여부에 달려있게 될 것
 
--   One-Way ANCOVA는 level 1 독립변수를 투입하고, 기울기를 fixed하게 고려  
+-   **One-Way ANCOVA는 level 1 독립변수를 투입하고, 기울기를 fixed하게 고려**  
 
     -   Level 1: $Y_{ij} = \beta_{0j} + \beta_{1j}X_{ij}+ \epsilon_{ij} \quad \epsilon_{ij}\sim N(0,\sigma^2)$
 
@@ -1252,7 +1246,7 @@ e.g. SES에 의한 학생들간 수학 성취도 수준 차이가 학교별로 �
 ## Model 4. Random-Coefficient Model (Cont'd) {.smaller}
 
 \
-$$Var = \left[\begin{array}{cc} u_{0j} \\ u_{1j} \\ \end{array} \right]= \left[\begin{array}{cc} \tau_{00} & \tau_{01} \\ \tau_{10} & \tau_{11} \\ \end{array} \right] = \mathrm{T}$$
+$$Var(\left[\begin{array}{cc} u_{0j} \\ u_{1j} \\ \end{array} \right])= \left[\begin{array}{cc} \tau_{00} & \tau_{01} \\ \tau_{01} & \tau_{11} \\ \end{array} \right] = \mathrm{T}$$
 
 -   $Var(u_{0j})$ = $\tau_{00}$ = unconditional variance in level-1 intercepts
 
@@ -1510,7 +1504,7 @@ level.2.data %>%
   geom_point(aes(color = abs(exp.resid), size = abs(exp.resid), shape = factor(sector))) + 
   ggthemes::scale_colour_gradient_tableau(palette = "Red-Gold", guide = NULL) +  
   guides(color = "none", size= "none") +  
-  ggrepel::geom_text_repel(aes(label=id), size = 5)+
+  ggrepel::geom_text_repel(aes(label=id), size = 4)+
   geom_point(aes(y=exp.preds), shape =  1, alpha = 0.3) +
   ds4psy::theme_ds4psy() +
   xlab("Average Group (id) SES (z)")+
@@ -1656,11 +1650,11 @@ data_merged %>%
     -   Level 2 Model (slope): $\beta_{1j} = \gamma_{10} + \gamma{11}Z_{j} + u_{1j} \quad u_{1j} \sim N(0,\tau_{11}^2)$
 -   Overall Model Example: (intercept + fixed + random)
   
-    - $MATHCH_{ij} = \underline{\beta_{0j} + \gamma_{00}} + $ 
+    - intercept: $\beta_{0j} + \gamma_{00}$ 
   
-    - $\underline{\gamma_{01}(SECTOR_{j}) + \gamma_{10}(SES_{ij}) +\gamma_{11} (SECTOR_j)(SES_{ij})}$
+    - fixed effect: $\gamma_{01}(SECTOR_{j}) + \gamma_{10}(SES_{ij}) +\gamma_{11} (SECTOR_j)(SES_{ij})$
   
-    - $\underline{u_{1j}(SES_{ij}) + u_{0j} + \epsilon_{ij}} $
+    - random effect: $u_{1j}(SES_{ij}) + u_{0j} + \epsilon_{ij}$
 
 -   장점: allows us to explain the variation in both intercepts and slopes
 -   HLM의 최종 목적인 모형이며, 가장 어려운 모형이기도 하다.
