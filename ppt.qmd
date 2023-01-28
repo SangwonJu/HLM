@@ -1749,7 +1749,7 @@ plot_model(model8, type = 'pred', terms = c('ses_groupmc','sector'), ci.lvl = 0.
   theme(text=element_text(family='Nanum Gothic'))+
   ggeasy::easy_center_title() +
   ggeasy::easy_all_text_size(30) +
-  labs(x = "MEANSES" , y = "수학 성취도 (mathach)", title = "Predicted values of mathach",
+  labs(x = "SES(Group Mean Centered)" , y = "수학 성취도 (mathach)", title = "Predicted values of mathach",
        subtitle = "with random coefs model")
 ```
 :::
