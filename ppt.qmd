@@ -671,7 +671,7 @@ bind_cols(list(data*, data*, ... ), .name_repair = c("unique", "universal"))
 
 **Pipe Operator**: `%>%`
 
--   (lhs `%>%` rhs)는 lhs의 결과를 rhs의 첫번째 변수로 넘겨주는 역할. `'.'`은 앞의 값의 위치를 구체적으로 지정하기 위해 사용
+-   (lhs `%>%` rhs)는 lhs의 결과를 rhs의 첫번째 변수로 넘겨주는 역할. `'.'`은 앞의 값의 위치를 구체적으로 지정하기 위해 사용 (단축키: ctrl + shift + m (mac: cmd + shift + m))
     -   x `%>%` f is equivalent to f(x)
     -   x `%>%` f(y) is equivalent to f(x, y)
     -   x `%>%` f(y, `.`) is equivalent to f(y, x)
