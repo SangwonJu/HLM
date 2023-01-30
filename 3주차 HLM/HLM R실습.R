@@ -270,6 +270,7 @@ icc(model4)
 # the individual random effects (level 2 residuals of the intercept, i.e. the υ0i)
 ranef(model4)
 ranova(model4)
+bdiag(VarCorr(model4))
 
 ## Use BruceR package
 HLM_summary(model4,test.rand = T, digits = 3)

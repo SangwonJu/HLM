@@ -1271,22 +1271,18 @@ $$Var(\left[\begin{array}{cc} u_{0j} \\ u_{1j} \\ \end{array} \right])= \left[\b
 #| echo: true
 #| output: false
 #| code-overflow: wrap
-data_merged <- data_merged %>% 
-  group_by(id) %>% 
+data_merged <- data_merged %>% group_by(id) %>% 
   mutate(meanses = mean(ses),
          ses_groupmc = ses - meanses)
-
 model4 <- lmer(mathach ~  ses_groupmc + (ses_groupmc | id), data=data_merged)
 model4_alt <- lmer(mathach ~  ses_groupmc + (1 | id), data=data_merged)
-icc(model4)
 
 # the individual random effects (level 2 residuals of the intercept, i.e. the υ0i)
 ranef(model4)
 ranova(model4)
-
+bdiag(VarCorr(model4))
 ## Use BruceR package
 HLM_summary(model4,test.rand = T, digits = 3)
-
 # lrtest for coefficient randomness
 anova(model4, model4_alt)
 ```
