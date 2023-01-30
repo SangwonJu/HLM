@@ -47,11 +47,11 @@ revealjs-plugins:
 
 i.  **이론**
 
--   위계적 선형모형 (Hierarchical Linear Modelling = Mixed Effect Model = Multilevel Model)의 개념
+-   위계적 선형모형의 배경
 
     > 핵심어: Gauss-Markov Theorem, Nested Data, Ecological fallacy
 
--   HLM의 유형 및 분석단계별 유의사항
+-   HLM(Hierarchical Linear Modelling = Mixed Effect Model = Multilevel Model)의 유형 및 분석단계별 유의사항
 
     > 핵심어: Intercept and Slopes, MLE, ICC, AIC(BIC), Deviance, Fixed and Random Effects, Within vs. Between
 
@@ -59,7 +59,7 @@ i.  **이론**
 
 ii. **실습:** R과 Stata로 실제 데이터 분석
 
-# Module I: 위계적 선형모형의 개념 {background-color="#0AA8AB"}
+# Module I: 위계적 선형모형의 배경경 {background-color="#0AA8AB"}
 
 ## 회귀분석의 기본 가정s
 
@@ -369,9 +369,10 @@ simul %>%
 -   **Pooled-OLS**는 집단간 군집성 무시, 가우스 마르코브 가정 위배, 심슨의 패러독스, 개인주의적 오류, **Between 모형**은 개개인들의 특성이 고려되지 않는 문제 , 생태학적 오류
 -   **HLM의 필요성**: within과 between을 동시에 다루고, level 1과 2를 동시에 고려
 :::
-# Module II: HLM의 개념 {background-color="#0AA8AB"}
 
-## 위계적 선형 모형 (HLM)
+# Module II: 위계적 선형모형의 개념 {background-color="#0AA8AB"}
+
+## 위계적 선형모형 (HLM)
 
 ::: justify
 **(Hierarchical Linear Modelling = Mixed Effect Model = Multilevel Model)**
