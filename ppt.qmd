@@ -59,7 +59,7 @@ i.  **이론**
 
 ii. **실습:** R과 Stata로 실제 데이터 분석
 
-# Module I: 위계적 선형모형의 배경경 {background-color="#0AA8AB"}
+# Module I: 위계적 선형모형의 배경 {background-color="#0AA8AB"}
 
 ## 회귀분석의 기본 가정s
 
@@ -470,7 +470,7 @@ $$Y_{i} = \beta_{0} + \beta_{1} X_{i} + \epsilon_{i} \quad \epsilon_i \sim N(0,\
 
 -   기존 회귀분석 방법에 비해 효과적이며, 잔차의 독립성에서 자유롭고, 분산을 수준별로 산출가능
 
-# Module III: HLM의 모형 구체화 {background-color="#0AA8AB"}
+# Module III: 위계적 선형모형의 구체화 {background-color="#0AA8AB"}
 
 ## Model Specification with R
 
@@ -1567,7 +1567,7 @@ anova(model3, model7)
 
 ![](./model7.png){fig-align="center"}
 
-# Module IV: Centering and Cross-level Interaction {background-color="#0AA8AB"}
+# Module IV: 중심화와 수준 간 상호작용 {background-color="#0AA8AB"}
 
 ## Centering {.smaller}
 
@@ -1618,7 +1618,7 @@ anova(model3, model7)
 ::: justify
 -   그래서 도대체 언제 Centering을 해야 하는가? [출처](https://ukchanoh.wordpress.com/2015/07/08/multilevel-centering/)  
 
-    3.  **Level-1 & Level-2 수준 간 상호작용에 관심이 있을 떄**
+    3.  **Level-1 & Level-2 수준 간 상호작용에 관심이 있을 때**
 
     -   Level-1 변수($X_{ij}$)의 영향이 Level-2 변수($Z_j$)에 따라 어떻게 달라지는지가 연구문제일 때
     -   Level-1 변수가 집단 내 효과($\beta_w$를 의미하도록 **집단평균 중심화**를 하는 것이 적절 (Hofmann and Gavin, 1998)
