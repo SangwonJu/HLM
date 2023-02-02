@@ -5,6 +5,7 @@
 pacman::p_load(tidyverse, magrittr,
                lme4, lmerTest, bruceR,
                merTools, 
+               plm, 
                skimr, psych, readstata13, 
                broom, broom.mixed)
 
@@ -17,15 +18,14 @@ getwd()
 ###########################################################################################
 # 기초 R
 
-# assign 
-"A"
-"B"
+# assign  
+"B" # 블록지정하거나 해당라인 단축키 ctrl + enter
 1
 class(1)
 class("A")
 
 ## variable <- value
-value <- "A"
+value <- "A" # 단축키 ALT + -
 value
 
 # factor
@@ -82,66 +82,6 @@ summary(lmfit5)
 # if_else
 if_else(data$year>2007,1,0)
 
-# pipe 연습
-c(1,2,3,4,5)
-mean(c(1,2,3,4,5))
-a <- c(1,2,3,4,5)
-a %>% mean
-a %>% mean()
-
-# lm with pipe
-data %>% 
-  lm(bill_length_mm~bill_depth_mm+flipper_length_mm+sex, data=.) %>% 
-  summary()
-
-data %>% 
-  lm(bill_length_mm~bill_depth_mm+flipper_length_mm+sex, data=.) %>% 
-  tidy()
-
-###########################################################################################
-# dplyr: join 함수 연습 
-band_members; band_instruments; band_instruments2
-
-full_join (x=band_members,
-           y=band_instruments, 
-           by = "name")
-inner_join(x=band_members,
-           y=band_instruments, 
-           by = "name")
-left_join (x=band_members,
-           y=band_instruments, 
-           by = "name")
-right_join (x=band_members,
-           y=band_instruments, 
-           by = "name")
-
-# id 명이 서로 다를떄  
-left_join (x=band_members,
-           y=band_instruments2, 
-           by = c("name"="artist"))
-
-# 편의상 %>% 의 사용
-band_members %>% 
-  left_join (y=band_instruments2, 
-           by = c("name"="artist"))
-
-###########################################################################################
-# dplyr: bind 함수 연습 
-one <- starwars[1:4, ]
-two <- starwars[9:12, ]
-
-## bind_rows
-bind_rows(one, two)
-bind_rows(list(one, two))
-one %>% 
-  bind_rows(two)
-
-## with id 
-bind_rows(list(a = one, b = two), .id = "id")
-
-## bind_cols
-bind_cols(one, two)
-View(bind_cols(one, two))
 
 ###########################################################################################
 
@@ -183,6 +123,95 @@ data_merged %>%
 
 ###########################################################################################
 
+# dplyr: join 함수 연습 
+band_members; band_instruments; band_instruments2
+
+full_join (x=band_members,
+           y=band_instruments, 
+           by = "name")
+inner_join(x=band_members,
+           y=band_instruments, 
+           by = "name")
+left_join (x=band_members,
+           y=band_instruments, 
+           by = "name")
+right_join (x=band_members,
+           y=band_instruments, 
+           by = "name")
+
+# id 명이 서로 다를떄  
+left_join (x=band_members,
+           y=band_instruments2, 
+           by = c("name"="artist"))
+
+# 편의상 %>% 의 사용
+band_members %>% 
+  left_join (y=band_instruments2, 
+           by = c("name"="artist"))
+
+###########################################################################################
+
+# dplyr: bind 함수 연습 
+one <- starwars[1:4, ]
+two <- starwars[9:12, ]
+
+## bind_rows
+bind_rows(one, two)
+bind_rows(list(one, two))
+one %>% 
+  bind_rows(two)
+
+## with id 
+bind_rows(list(a = one, b = two), .id = "id")
+
+## bind_cols
+bind_cols(one, two)
+View(bind_cols(one, two))
+
+###########################################################################################
+
+# tidyr: bind 함수 연습 
+# pivot_longer
+data("billboard", package = "tidyr")
+billboard %>% 
+  pivot_longer(cols = wk1:wk76, 
+               names_to = "week",
+               values_to = "rank",
+               values_drop_na = T) 
+billboard %>% 
+  pivot_longer(cols = wk1:wk76, # starts_with('wk')
+               names_to = "week",
+               values_to = "rank",
+               values_drop_na = T,
+               names_prefix = "wk",
+               names_transform = as.integer) 
+
+# pivot_wider
+data("fish_encounters", package = "tidyr")
+fish_encounters %>% 
+  pivot_wider(names_from = "station", values_from = "seen" )
+
+###########################################################################################
+
+# pipe 연습 
+# 단축키: ctrl + shift + m
+c(1,2,3,4,5)
+mean(c(1,2,3,4,5))
+a <- c(1,2,3,4,5)
+a %>% mean
+a %>% mean()
+
+# lm with pipe
+data %>% 
+  lm(bill_length_mm~bill_depth_mm+flipper_length_mm+sex, data=.) %>% 
+  summary()
+
+data %>% 
+  lm(bill_length_mm~bill_depth_mm+flipper_length_mm+sex, data=.) %>% 
+  tidy()
+
+###########################################################################################
+
 # Pooled OLS
 model_pols <- lm(mathach ~ sector + ses, data= data_merged)
 summary(model_pols)
@@ -200,6 +229,7 @@ model_btw <- lm(mean_mathach ~ meanses + sector, data = data_btw)
 summary(model_btw)
 
 ###########################################################################################
+
 # Centering
 data_merged <- data_merged %>% 
   mutate(ses_grandmc = ses - mean(ses))%>% 
@@ -217,16 +247,20 @@ data_merged %>%
   ungroup()
 
 ###########################################################################################
+
 # Five models in HLM Two-Level Analysis
 
 # Preliminary ANOVA
 model1 <-  aov(mathach~id, data=data_merged)
 anova(model1)
+
 broom::tidy(model1) %>% 
   mutate(across(where(is.numeric),~round(.,3)))
 
-
 ###########################################################################################
+## Use BruceR package
+HLM_ICC_rWG(data_merged, group="id", icc.var="mathach")
+
 
 # 1. One-way ANOVA (혹은 Unconditional Model - 무조건 모형)
 model1 <- lmer(mathach ~ 1 + (1 | id), data=data_merged)

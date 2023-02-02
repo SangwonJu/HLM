@@ -19,7 +19,7 @@ format:
 incremental: false
 embed-resources: true
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 revealjs-plugins:
   - pointer
 ---
@@ -76,7 +76,7 @@ ii. **실습:** R과 Stata로 실제 데이터 분석
 
 ![](page4.png){fig-align="center"}
 
-## 위계적 다층자료 (Cont'd)
+## 위계적 다층자료 
 
 -   위계구조(hierarchical structure) 
     -   하나의 단위가 그보다 상위 수준(level)에 속해 있는 구조
@@ -84,39 +84,6 @@ ii. **실습:** R과 Stata로 실제 데이터 분석
 
 ![](hs.png){fig-align="center"}
 
-## 위계적 다층자료: Nested Data의 주요 형태
-
--   위계적 구조: Long Form vs. Wide Form
-
-::: {#tbl-panel layout-ncol="2"}
-| 이름 | 1반 | 2반 | 3반 | 통계성적 |
-|:----:|:---:|:---:|:---:|:--------:|
-|  A   |  0  |  0  |  0  |    95    |
-|  B   |  1  |  0  |  1  |    65    |
-|  C   |  0  |  1  |  0  |    85    |
-|  D   |  0  |  1  |  0  |    45    |
-|  E   |  0  |  0  |  1  |    75    |
-
-: Wide Form Nested {#tbl-first}
-
-| 이름 | 소속반 | 통계성적 |
-|:----:|:------:|:--------:|
-|  A   |  1반   |    95    |
-|  B   |  3반   |    65    |
-|  C   |  2반   |    85    |
-|  D   |  2반   |    45    |
-|  E   |  3반   |    75    |
-
-: Long Form Nested {#tbl-second}
-
-학생이 학교에 내재한 2-수준 다층자료의 예시
-:::
-
-. . .
-
-::: {style="font-size: 1 em; color: #066163;"}
--   *if 소속반을 시간으로 바꾸어 반복측정?:* **종단(Longitudinal) Panel Data**
-:::
 
 ## 위계적 다층자료 (Cont'd)
 
@@ -362,13 +329,22 @@ simul %>%
 
 ## Module I: Sum-up
 
-::: justify
+
 -   현대 사회에서 인간의 다양한 위계에 nested 되어있는 존재이다.
+
+. . . 
+
 -   이러한 조직 내에서의 군집성으로 인해 서로서로에게 영향을 주게 되고, 결과적으로 개체들 간의 독립성을 가정하는 가우스-마르코프 가정을 충족하는 것이 까다로움
     -   기존방법은 (1) 개인 간의 완벽한 독립성이 존재하기 어렵고, (2) 자료 자체가 nested되어 있다는 것을 고려하지 못함 $\rightarrow$ Individual 대상 연구에서 (특히, 조직맥락) OLS는 더이상 만능 X, 개인주의적, 생태학적 오류를 범할 수 있게 됨
+
+. . . 
+
 -   **Pooled-OLS**는 집단간 군집성 무시, 가우스 마르코브 가정 위배, 심슨의 패러독스, 개인주의적 오류, **Between 모형**은 개개인들의 특성이 고려되지 않는 문제 , 생태학적 오류
+
+. . .
+
 -   **HLM의 필요성**: within과 between을 동시에 다루고, level 1과 2를 동시에 고려
-:::
+
 
 # Module II: 위계적 선형모형의 개념 {background-color="#0AA8AB"}
 
@@ -378,10 +354,10 @@ simul %>%
 **(Hierarchical Linear Modelling = Mixed Effect Model = Multilevel Model)**
 
 
--   designed to overcome the weakness of the disaggregated and aggregated approaches\
+-   위계적 선형모형은 비군집화되거나 군집화된 접근의 한계를 극복하기 위해서 개발됨\
 
-1.  explicitly model both **individual and group level residuals**, therefore, recognizing the partial interdependence of individuals within the same group (compared to OLS)
-2.  investigate both **lower level unit and higher level unit** variance in the outcome measure
+1.  **개인 수준과 집단 수준의 잔차**를 모델링함을 통해서 결과적으로 OLS대비 동일한 그룹 내의 개인들 간의 부분적인 독립성을 확보함 
+2.  **낮은 수준의 단위와 높은 수준의 단위** 내에 존재하는 분산을 동시에 고려하는 접근
 
 $\therefore$ Model both within and between group variance (i.e., able to preserve potentially meaningful within group variance) + Investigate the influence of higher level units on lower level outcomes
 :::
@@ -432,7 +408,7 @@ $$Y_{i} = \beta_{0} + \beta_{1} X_{i} + \epsilon_{i} \quad \epsilon_i \sim N(0,\
 4.  학생들의 수학성취도는 개인차 요인의 영향을 더 많이 받는가 아니면 학교차 요인의 영향을 더 많이 받는가?  
 5.  저소득층 학생비율이 높은 학교의 학생들은 수학성취도에서 어느정도의 불이익을 받는가?  
 6.  학생 가정의 SES는 수학성취도와 어느정도 관련이 있는가?  
-7.  학생가정의 SES를 통제한 이후엥도, 학교별 고정평균 수학성취도는 여전히 학교간에 차이가 있는가?  
+7.  학생가정의 SES를 통제한 이후에도, 학교별 고정평균 수학성취도는 여전히 학교간에 차이가 있는가?  
 8.  가정의 SES가 수학성취도에 미치는 효과는 모든 학교에서 유사한가? 만일 학교에 따라 다르다면 그 크기는 어느 정도인가?  
 9.  학생의 가정배경을 통제한 이후에 어떠한 특성의 중학교에서 평균 수학성취도가 높은가?  
 10. 학생들의 수학성취도가 가정환경에 영향을 받는 정도는 어떤 특성의 학교에서 더 커지는가?
@@ -460,15 +436,21 @@ $$Y_{i} = \beta_{0} + \beta_{1} X_{i} + \epsilon_{i} \quad \epsilon_i \sim N(0,\
 
 -   HLM은 서로 다른 수준의 분석단위를 하나의 모델에 포함시켜 하위 수준과 상위 수준의 모수를 동 시에 추정 가능하도록 하는 통계 방법
 
+. . .
+
 -   각 개인은 그가 속한 지역이나 집단의 특성으로 영향을 받고 있으며, 특정 조직 또는 집단에 속한 개인들은 그와 다른 집단이나 지역에 속한 개인들과 구별되는 공통 특성 가짐
 
     -   종속변수: 개인 수준에서 측정
     -   독립변수: 하위수준(개인) & 상위수준(집합단위)
     -   선형 모형이기에 변수들 사이의 선형관계를 가정
 
+. . . 
+
 -   어떤 변수들이 어떤 수준에 속하는지 지정 가능, 수준 간 교차 및 상호작용효과 고려가능
 
--   기존 회귀분석 방법에 비해 효과적이며, 잔차의 독립성에서 자유롭고, 분산을 수준별로 산출가능
+. . . 
+
+-   기존 회귀분석 방법과 달리 잔차의 독립성에서 자유롭고, 분산을 수준별로 산출가능
 
 # Module III: 위계적 선형모형의 구체화 {background-color="#0AA8AB"}
 
@@ -494,10 +476,10 @@ pacman::p_load("tidyverse", "magrittr", # data분석 필수 패키지
                "lmerTest", "lme4", "merTools", "nlme", # HLM 패키지
                "bruceR", # HLM 결과 정리 표 생성
                "readstata13", # statafile (.dta) 열어주는 패키지 
-               "skimr", "psych") # 요약표, 심리학 분석
+               "skimr", "psych", # 요약표, 심리학 분석
+               "plm") # 패널회귀분석 (within, random)
 ## 자신이 설정하고 싶은 곳으로 설정
-setwd("E:/OneDrive - SNU/(B) 대학원/세미나/HLM")
-getwd()
+setwd("E:/OneDrive - SNU/(B) 대학원/세미나/HLM"); getwd()
 
 # Read data
 data_lv1 <- read.dta13("./HSB1.dta"); data_lv2 <- read.dta13("./HSB2.dta")
@@ -720,6 +702,40 @@ head(merged, 5) %>%
                   position = "center", font_size = 20)
 ```
 
+## Data Pivot: `pivot_longer` and `pivot_wider` {.smaller}
+
+- **Long Form**: 긴 형태의 데이터는 열로 표현된 변수들을 행 방향으로 풀어 넣음으로써 열의 개수는 줄고 행의 개수는 늘어나는 형태의 데이터
+    - 긴 형태의 데이터는 데이터 시각화, 패널회귀분석에 매우 적합한 형태나 직관성이 떨어짐
+    
+- **Wide Form**:  넓은 형태의 데이터는 행로 표현된 변수들을 열 방향으로 풀어 넣음으로써 행의 개수는 줄고 열의 개수는 늘어나는 형태의 데이터
+    - 사용자가 직관적으로 데이터의 전반적 분포를 살펴보기가 좋지만, 활용이 어려움
+
+```{r}
+#| echo: true
+#| output: false
+
+# pivot_longer
+data("billboard", package = "tidyr")
+billboard %>% 
+  pivot_longer(cols = wk1:wk76, # starts_with('wk')
+               names_to = "week",
+               values_to = "rank",
+               values_drop_na = T) 
+billboard %>% 
+  pivot_longer(cols = wk1:wk76, # starts_with('wk')
+               names_to = "week",
+               values_to = "rank",
+               values_drop_na = T,
+               names_prefix = "wk",
+               names_transform = as.integer) 
+
+# pivot_wider
+data("fish_encounters", package = "tidyr")
+fish_encounters %>% 
+  pivot_wider(names_from = "station", values_from = "seen" )
+
+```
+
 ## Pooled-OLS and Between Model
 
 ```{r}
@@ -881,7 +897,7 @@ data_merged %>%
 
 -   Level 2: $\beta_{0j} = \gamma_{00} + u_{0j} , \quad u_{0j} \sim N(0,\tau_{00})$
 
--   급간상관계수와 신뢰도 계산이 주 목적으로 모형에 아무런 predictor variable들이 투입되지 않음  
+-   **급간상관계수(ICC)와 신뢰도 계산**이 주 목적으로 모형에 아무런 predictor variable들이 투입되지 않음  
 
 ```{r}
 #| echo: true
@@ -1778,10 +1794,10 @@ library(stargazer)
 vars.order <- c(3,1,6,4,2,5)
 ```
 
-```{r}
+```{r }
 #| echo: false
 #| output: false
-
+#| error: false
 
 stargazer(model_btw, model_pols, model_anova, model_randomintercept, model_randomcoef, 
           model_itcptoutcome, model_contextual, model_slopeoutcome, model_final,
@@ -1834,6 +1850,24 @@ tab_model(model_pols, model_final,
 ![](./결론.png){fig-align="center" width="30%"}
 
 # E.O.D. {background-color="#0AA8AB"}
+
+## 참고: R vs. STATA {.smaller}
+```{r}
+#|echo: false
+#|output: false
+library(Statamarkdown)
+stataexe <- find_stata()
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+```
+
+```{stata, echo=TRUE, cleanlog = TRUE}
+cd "E:/OneDrive - SNU/(B) 대학원/세미나/HLM/3주차 HLM"
+use HSB1.dta, clear
+merge m:1 id using ".\HSB2.dta"
+bysort id :egen meanses = mean(ses)
+gen ses_groupmc= ses - meanses
+eststo final_rand: mixed mathach c.ses_groupmc##ib0.sector meanses|| id: ses_groupmc, mle var cov(un)
+```
 
 
 ## 참고: R vs. STATA (Summary & Fit Statistics) {.smaller}
