@@ -90,7 +90,7 @@ ii. **실습:** R과 Stata로 실제 데이터 분석
 -   **학생들은 각 학교에 내재한 구조** 
     -   동일 반에 속한 학생들은 학교의 문화, 학습환경, 친구관계, 교사 등 수많은 요인들을 공유
 -   **상호의존성**\
-    -   개인을 둘러싼 지역의 경제, 사회, 문화, 제도 및 물리적 특성이 개개인의 행동, 선호 도, 가치관 등에 영향을 미치기 때문
+    -   개인을 둘러싼 지역의 경제, 사회, 문화, 제도 및 물리적 특성이 개개인의 행동, 선호도, 가치관 등에 영향을 미치기 때문
     -   관찰단위인 학생들은 동일 학교, 동일 반 내에서는 **상호의존성**을 가지게 되고, 소속이 다르면 독립성을 갖음 $\rightarrow$ 독립성 가정이 결과적으로 위배되게 됨
 -   **복수의 Unit of Analysis**\
     -   학생수준에서의 변수 (Level 1), 학교수준에서의 변수 (Level 2)
@@ -310,8 +310,8 @@ simul %>%
 
 ## 기존 접근의 한계
 
--   How to investigate relationships between variables that reside at different hierarchical levels (Bryk & Raudenbush, 2002)\
 -   **Disaggregate?**: POLS $\rightarrow$ independence of obs assumption violated, 개인주의적 오류(individualistic fallacy)
+      - 표준오차가 상당히 작아져 귀무가설을 기각할 확률이 매우 높아지는 잘못된 추정결과를 발생시킴
 
 -   **Aggregate?**: Between $\rightarrow$ waste information from indvs, sample $\downarrow$, 생태학적 오류(Ecological Fallacy)
 
@@ -330,16 +330,15 @@ simul %>%
 ## Module I: Sum-up
 
 
--   현대 사회에서 인간의 다양한 위계에 nested 되어있는 존재이다.
+-   현대 사회에서 인간의 다양한 위계에 nested. 조직 내에서의 군집성으로 인해 서로서로에게 영향을 주게 되고, 결과적으로 개체들 간의 독립성을 가정하는 가우스-마르코프 가정을 충족하는 것이 까다로움
 
 . . . 
 
--   이러한 조직 내에서의 군집성으로 인해 서로서로에게 영향을 주게 되고, 결과적으로 개체들 간의 독립성을 가정하는 가우스-마르코프 가정을 충족하는 것이 까다로움
-    -   기존방법은 (1) 개인 간의 완벽한 독립성이 존재하기 어렵고, (2) 자료 자체가 nested되어 있다는 것을 고려하지 못함 $\rightarrow$ Individual 대상 연구에서 (특히, 조직맥락) OLS는 더이상 만능 X, 개인주의적, 생태학적 오류를 범할 수 있게 됨
+-   기존방법은 (1) 개인 간의 완벽한 독립성이 존재하기 어렵고, (2) 자료 자체가 nested되어 있다는 것을 고려하지 못함 $\rightarrow$ Individual 대상 연구에서 (특히, 조직맥락) OLS는 더이상 만능 X, 오류를 범할 수 있게 됨
 
 . . . 
 
--   **Pooled-OLS**는 집단간 군집성 무시, 가우스 마르코브 가정 위배, 심슨의 패러독스, 개인주의적 오류, **Between 모형**은 개개인들의 특성이 고려되지 않는 문제 , 생태학적 오류
+-   **Pooled-OLS**는 집단간 군집성 무시, 심슨의 패러독스, 개인주의적 오류, **Between 모형**은 개개인들의 특성이 고려되지 않는 문제 , 생태학적 오류
 
 . . .
 
